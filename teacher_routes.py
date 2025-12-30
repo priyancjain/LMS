@@ -52,6 +52,16 @@ def teacher_dashboard(request: Request, session: dict = Depends(get_session)):
         message_class = "alert-error"
 
     flows = list_flows()
+    print(f"DEBUG: teacher_dashboard flows count = {len(flows)}")
+    for f in flows[:3]:
+        print(f"DEBUG: flow = {f.title}")
+    
+    # Convert dataclass to dict for Jinja2 template compatibility
+    flows_dict = [
+        {"flow_id": f.flow_id, "title": f.title, "created_by": f.created_by, "created_at": f.created_at}
+        for f in flows
+    ]
+    
     return templates.TemplateResponse(
         "teacher_dashboard.html",
         {
@@ -62,7 +72,7 @@ def teacher_dashboard(request: Request, session: dict = Depends(get_session)):
             "user_email": session.get("email"),
             "message": message,
             "message_class": message_class,
-            "flows": flows,
+            "flows": flows_dict,
         },
     )
 

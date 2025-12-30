@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if message %}
+    <div class="alert {{ message_class or '' }}">{{ message }}</div>
+  {% endif %}
+
+  <div class="card" style="margin-bottom: 14px;">
+    <div class="row" style="justify-content: space-between;">
+      <div>
+        <h2 style="margin: 0;">Welcome back</h2>
+        <p class="subtitle" style="margin: 6px 0 0;">Pick a learning flow and start your journey.</p>
+      </div>
+      <a class="btn" href="/login/google">Switch account</a>
+    </div>
+  </div>
+
+  <section class="grid">
+    {% for flow in flows %}
+      <div class="card">
+        <h3 style="margin: 0 0 10px;">{{ flow.title }}</h3>
+        <p class="muted" style="margin: 0 0 12px;">Flow ID: {{ flow.flow_id }}</p>
+        <form method="post" action="/student/flow/start">
+          <input type="hidden" name="flow_id" value="{{ flow.flow_id }}" />
+          <button class="btn btn-primary" type="submit">Start Journey 🚀</button>
+        </form>
+      </div>
+    {% endfor %}
+
+    {% if flows|length == 0 %}
+      <div class="card">
+        <h3 style="margin: 0 0 10px;">No flows available yet</h3>
+        <p class="muted" style="margin: 0;">Ask your teacher to create a learning flow and questions.</p>
+      </div>
+    {% endif %}
+  </section>
+{% endblock %}
+

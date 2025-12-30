@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block content %}
+  {% if message %}
+    <div class="alert {{ message_class or '' }}">{{ message }}</div>
+  {% endif %}
+
+  <section class="grid">
+    <div class="card">
+      <h2 style="margin: 0 0 10px;">Create Learning Flow</h2>
+      <form method="post" action="/teacher/ui/flow/create">
+        <div class="field">
+          <label for="title">Flow title</label>
+          <input id="title" name="title" type="text" placeholder="e.g., Fractions Basics" required />
+        </div>
+        <button class="btn btn-primary" type="submit">Create Flow</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2 style="margin: 0 0 10px;">Add Question</h2>
+      <form method="post" action="/teacher/ui/question/create">
+        <div class="field">
+          <label for="flow_id">Flow ID</label>
+          <input id="flow_id" name="flow_id" type="text" placeholder="Paste a flow_id" required />
+        </div>
+
+        <div class="field">
+          <label for="difficulty">Difficulty</label>
+          <select id="difficulty" name="difficulty" required>
+            <option value="easy">easy</option>
+            <option value="medium">medium</option>
+            <option value="hard">hard</option>
+          </select>
+        </div>
+
+        <div class="field">
+          <label for="question_text">Question text</label>
+          <textarea id="question_text" name="question_text" placeholder="Write the question..." required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="options">Options (one per line)</label>
+          <textarea id="options" name="options" placeholder="Option A&#10;Option B&#10;Option C" required></textarea>
+        </div>
+
+        <div class="field">
+          <label for="correct_answer">Correct answer (must match one option exactly)</label>
+          <input id="correct_answer" name="correct_answer" type="text" placeholder="e.g., Option B" required />
+        </div>
+
+        <div class="field">
+          <label for="hint_text">Hint (shown after 2 incorrect attempts)</label>
+          <textarea id="hint_text" name="hint_text" placeholder="A helpful hint..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" type="submit">Add Question</button>
+      </form>
+    </div>
+  </section>
+
+  <section style="margin-top: 14px;">
+    <div class="card">
+      <h2 style="margin: 0 0 10px;">Your Flows</h2>
+      {% if flows and flows|length > 0 %}
+        <div class="grid">
+          {% for f in flows %}
+            <div class="kpi">
+              <div class="muted">Flow</div>
+              <strong>{{ f.title }}</strong>
+              <div class="muted">ID: {{ f.flow_id }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% else %}
+        <p class="muted" style="margin: 0;">No flows yet. Create your first one above.</p>
+      {% endif %}
+    </div>
+  </section>
+{% endblock %}

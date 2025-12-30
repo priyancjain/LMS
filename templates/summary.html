@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% set level = (summary.final_difficulty_reached if summary and summary.final_difficulty_reached else "easy") %}
+{% set badge_class = "badge-easy" if level == "easy" else ("badge-medium" if level == "medium" else "badge-hard") %}
+
+{% block content %}
+  <section class="card">
+    <h2 style="margin: 0 0 6px;">🎉 Journey Complete!</h2>
+    <p class="subtitle" style="margin: 0 0 14px;">Great effort. Here’s how your run went.</p>
+
+    {% if message %}
+      <div class="alert alert-warn">{{ message }}</div>
+    {% endif %}
+
+    {% if summary %}
+      <div class="grid">
+        <div class="kpi">
+          <div class="muted">Questions attempted</div>
+          <strong>{{ summary.total_questions_attempted }}</strong>
+        </div>
+        <div class="kpi">
+          <div class="muted">Correct answers</div>
+          <strong>{{ summary.total_correct_answers }}</strong>
+        </div>
+        <div class="kpi">
+          <div class="muted">Final level reached</div>
+          <strong><span class="badge {{ badge_class }}">{{ level|upper }}</span></strong>
+        </div>
+      </div>
+    {% endif %}
+
+    <div class="row" style="margin-top: 14px; justify-content: space-between;">
+      <a class="btn" href="/student/dashboard">Pick another flow</a>
+      <a class="btn btn-primary" href="/student/dashboard">Keep learning 🚀</a>
+    </div>
+  </section>
+{% endblock %}
+

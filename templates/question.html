@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% set level = (session_state.current_difficulty if session_state and session_state.current_difficulty else current_difficulty) %}
+{% set level_upper = (level or "easy")|upper %}
+{% set badge_class = "badge-easy" if level == "easy" else ("badge-medium" if level == "medium" else "badge-hard") %}
+
+{% block content %}
+  <div class="row" style="justify-content: space-between; margin-bottom: 12px;">
+    <span class="badge {{ badge_class }}">LEVEL: {{ level_upper }}</span>
+    <div class="progress">
+      Progress: {{ progress.question_index }} / {{ progress.total_questions }}
+    </div>
+  </div>
+
+  {% if feedback %}
+    <div class="alert {{ feedback_class or '' }}">{{ feedback }}</div>
+  {% endif %}
+
+  <section class="card">
+    <h2 style="margin: 0 0 12px;">{{ question.question_text }}</h2>
+
+    <form method="post" action="/student/answer">
+      <input type="hidden" name="flow_id" value="{{ question.flow_id }}" />
+      <div class="choices">
+        {% for opt in question.options %}
+          <label class="choice">
+            <input type="radio" name="answer" value="{{ opt }}" required />
+            <span>{{ opt }}</span>
+          </label>
+        {% endfor %}
+      </div>
+
+      <div class="row" style="margin-top: 14px; justify-content: space-between;">
+        <a class="btn" href="/student/dashboard">Back to flows</a>
+        <button class="btn btn-primary" type="submit">Submit</button>
+      </div>
+    </form>
+
+    {% if hint %}
+      <div class="hint">
+        <strong>Helper Hint</strong>
+        <div style="margin-top: 6px;">{{ hint }}</div>
+      </div>
+    {% endif %}
+  </section>
+
+  {% if session_state %}
+    <section style="margin-top: 14px;" class="grid">
+      <div class="kpi">
+        <div class="muted">Correct streak</div>
+        <strong>{{ session_state.correct_count }}</strong>
+      </div>
+      <div class="kpi">
+        <div class="muted">Wrong streak</div>
+        <strong>{{ session_state.wrong_count }}</strong>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}
+

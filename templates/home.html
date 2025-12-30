@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="card">
+    <h2 style="margin: 0 0 6px;">Welcome</h2>
+    <p class="subtitle" style="margin: 0 0 14px;">
+      Sign in with Google to access your dashboard.
+    </p>
+
+    <div class="row">
+      <a class="btn btn-primary" href="/login/google">Login with Google</a>
+      <a class="btn" href="/docs">API Docs</a>
+    </div>
+
+    <div style="margin-top: 14px;" class="muted">
+      After login you’ll be routed to <code>/teacher/dashboard</code> or <code>/student/dashboard</code>.
+    </div>
+  </section>
+{% endblock %}
+

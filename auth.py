@@ -121,12 +121,20 @@ def _google_authorize_url(redirect_uri: str, state: str) -> str:
         "scope": "openid email",
         "state": state,
     }
-    return "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    auth_url = "https://accounts.google.com/o/oauth2/v2/auth?" + urllib.parse.urlencode(params)
+    print(f"DEBUG _google_authorize_url: redirect_uri = {redirect_uri}")
+    print(f"DEBUG _google_authorize_url: client_id = {client_id}")
+    print(f"DEBUG _google_authorize_url: full auth URL = {auth_url}")
+    return auth_url
 
 
 def _exchange_code_for_token(code: str, redirect_uri: str) -> str:
     client_id = _require_env("GOOGLE_CLIENT_ID")
     client_secret = _require_env("GOOGLE_CLIENT_SECRET")
+
+    print(f"DEBUG _exchange_code_for_token: code = {code[:20]}...")
+    print(f"DEBUG _exchange_code_for_token: redirect_uri = {redirect_uri}")
+    print(f"DEBUG _exchange_code_for_token: client_id = {client_id}")
 
     form = urllib.parse.urlencode(
         {
@@ -137,6 +145,8 @@ def _exchange_code_for_token(code: str, redirect_uri: str) -> str:
             "grant_type": "authorization_code",
         }
     ).encode("utf-8")
+
+    print(f"DEBUG _exchange_code_for_token: form data = {form.decode('utf-8')}")
 
     req = urllib.request.Request(
         "https://oauth2.googleapis.com/token",

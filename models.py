@@ -98,6 +98,7 @@ def create_flow(*, title: str, created_by: str) -> FlowRecord:
             "INSERT INTO flows (flow_id, title, created_by, created_at) VALUES (?, ?, ?, ?)",
             (flow_id, title, created_by, created_at),
         )
+        conn.commit()
     return FlowRecord(flow_id=flow_id, title=title, created_by=created_by, created_at=created_at)
 
 
@@ -144,6 +145,7 @@ def create_question(
                 created_at,
             ),
         )
+        conn.commit()
     return QuestionRecord(
         question_id=question_id,
         flow_id=flow_id,

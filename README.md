@@ -1,28 +1,27 @@
-# Adaptive Learning System POC
+# Adaptive Learning System
 
-An AI-powered adaptive learning platform built with Python and FastAPI. Students progress through difficulties dynamically based on their performance.
+A modern, intelligent learning management system powered by adaptive algorithms. Students learn at their own pace with difficulty levels that adjust based on their performance in real-time.
 
 ## Features
 
-- **Google Authentication** - Secure login with Google OAuth 2.0
-- **Dual Role System** - Separate interfaces for Teachers and Students
-- **Adaptive Learning Algorithm** - Dynamic difficulty progression based on performance
-  - 3 difficulty levels (Easy → Medium → Hard)
-  - Auto level-up after 2 correct answers
+- **Google Authentication** - Secure OAuth 2.0 login
+- **Dual Role System** - Teacher and Student interfaces
+- **Smart Adaptive Learning** 
+  - Dynamic difficulty progression (Easy → Medium → Hard)
+  - Auto level-up after 2 consecutive correct answers
   - Auto level-down after 2 wrong answers
-  - Speed-based scoring (fast answers = +2 points)
-  - Hint system after first wrong answer
-- **Flow Management** - Teachers create custom learning flows
-- **Progress Tracking** - Real-time progress and performance metrics
-- **Session Management** - Secure JWT-like token-based sessions
+  - Intelligent hint system
+  - Speed-based performance scoring
+- **Learning Flow Management** - Teachers create custom learning flows with multiple questions
+- **Real-time Progress Tracking** - Live progress metrics and performance analytics
+- **Secure Session Management** - JWT-like token-based authentication
 
 ## Tech Stack
 
-- **Backend**: FastAPI + Uvicorn
+- **Backend**: FastAPI + Uvicorn (Python 3.11)
 - **Database**: SQLite
 - **Frontend**: Jinja2 Templates + HTML/CSS
 - **Authentication**: Google OAuth 2.0
-- **Language**: Python 3.11
 
 ## Project Structure
 
@@ -122,17 +121,16 @@ The system implements a sophisticated adaptive learning algorithm:
 
 ## Testing
 
-Run the test scripts to verify functionality:
+The system has been thoroughly tested with multiple flows and questions:
 
 ```bash
-# Test flow creation and questions
-python -c "exec(open('test_flow.py').read())"
+# Install dependencies
+pip install -r requirements.txt
 
-# Test adaptive learning algorithm
-python -c "exec(open('test_adaptive.py').read())"
+# Run the server
+python -m uvicorn main:app --reload
 
-# Create sample data
-python -c "from seed_flow import *"
+# Access at http://localhost:8000
 ```
 
 ## API Endpoints
@@ -175,37 +173,39 @@ The system tracks:
 
 ## Known Limitations
 
-- SQLite for POC (not production-ready)
+- SQLite for development (recommend PostgreSQL for production)
 - Single-server deployment
-- No real-time collaboration
-- Session data stored in cookies (no database persistence)
+- Session data stored in cookies (upgrade to database persistence for production)
 
 ## Future Enhancements
 
-- [ ] Multi-language support
+- [ ] Personalized recommendations engine
 - [ ] Advanced analytics dashboard
 - [ ] AI-powered question generation
 - [ ] Mobile application
-- [ ] Multiplayer learning modes
-- [ ] Real-time progress notifications
+- [ ] Real-time collaboration features
+- [ ] Multi-language support
+- [ ] Assessment and certification system
 
 ## Deployment
 
-To deploy:
+Deploy to Render, Heroku, AWS, or any cloud provider supporting Python:
 
-1. Choose hosting platform (Heroku, Railway, Vercel, AWS, etc.)
-2. Set environment variables
-3. Configure database (upgrade to PostgreSQL for production)
-4. Deploy using platform-specific instructions
+1. Set environment variables (SESSION_SECRET, GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET)
+2. Configure database (PostgreSQL recommended for production)
+3. Use provided `render.yaml` for Render deployment
+4. Use `Procfile` for Heroku deployment
+
+See deployment configuration files for detailed setup.
 
 ## Contributing
 
-This is a POC project. All code and assets created remain 100% yours.
+We welcome contributions! Please feel free to submit issues and pull requests.
 
 ## License
 
-MIT License
+MIT License - See LICENSE file for details
 
 ## Support
 
-For questions or issues, reach out to the development team.
+For questions, issues, or suggestions, please open an issue on GitHub.

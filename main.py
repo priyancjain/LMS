@@ -16,11 +16,10 @@ from teacher_routes import router as teacher_router
 
 app = FastAPI(title="Adaptive Learning System")
 
-# Trust proxy headers for Render
+# Trust proxy headers for Render - only use allowed_hosts parameter
 app.add_middleware(
     TrustedHostMiddleware,
     allowed_hosts=["*"],
-    trust_headers=True,
 )
 
 BASE_DIR = Path(__file__).resolve().parent

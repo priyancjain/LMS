@@ -180,7 +180,13 @@ def _fetch_user_email(access_token: str) -> str:
 
 @router.get("/login/google")
 def login_google(request: Request):
+    # Generate redirect URI - ensure it's HTTPS on production
     redirect_uri = str(request.url_for("auth_callback"))
+    
+    # Fix for production (Render uses HTTPS)
+    if "onrender.com" in request.url.netloc or "herokuapp.com" in request.url.netloc:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+    
     state = secrets.token_urlsafe(24)
 
     session = _get_session(request)
@@ -202,6 +208,11 @@ def auth_callback(request: Request, code: str | None = None, state: str | None =
         raise HTTPException(status_code=400, detail="Invalid state")
 
     redirect_uri = str(request.url_for("auth_callback"))
+    
+    # Fix for production (Render uses HTTPS)
+    if "onrender.com" in request.url.netloc or "herokuapp.com" in request.url.netloc:
+        redirect_uri = redirect_uri.replace("http://", "https://")
+    
     access_token = _exchange_code_for_token(code, redirect_uri)
     email = _fetch_user_email(access_token)
 

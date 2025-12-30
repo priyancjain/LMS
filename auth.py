@@ -180,13 +180,14 @@ def _fetch_user_email(access_token: str) -> str:
 
 @router.get("/login/google")
 def login_google(request: Request):
-    # Generate redirect URI - ensure it's HTTPS on production
-    redirect_uri = str(request.url_for("auth_callback"))
+    # Generate redirect URI with proper HTTPS handling for production
+    base_url = str(request.base_url).rstrip("/")
     
-    # Fix for production (Render uses HTTPS)
-    if "onrender.com" in request.url.netloc or "herokuapp.com" in request.url.netloc:
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    # Always use HTTPS for production domains
+    if "onrender.com" in base_url or "herokuapp.com" in base_url:
+        base_url = base_url.replace("http://", "https://")
     
+    redirect_uri = f"{base_url}/auth/callback"
     state = secrets.token_urlsafe(24)
 
     session = _get_session(request)
@@ -207,11 +208,14 @@ def auth_callback(request: Request, code: str | None = None, state: str | None =
     if not expected_state or not state or state != expected_state:
         raise HTTPException(status_code=400, detail="Invalid state")
 
-    redirect_uri = str(request.url_for("auth_callback"))
+    # Generate redirect URI with proper HTTPS handling for production
+    base_url = str(request.base_url).rstrip("/")
     
-    # Fix for production (Render uses HTTPS)
-    if "onrender.com" in request.url.netloc or "herokuapp.com" in request.url.netloc:
-        redirect_uri = redirect_uri.replace("http://", "https://")
+    # Always use HTTPS for production domains
+    if "onrender.com" in base_url or "herokuapp.com" in base_url:
+        base_url = base_url.replace("http://", "https://")
+    
+    redirect_uri = f"{base_url}/auth/callback"
     
     access_token = _exchange_code_for_token(code, redirect_uri)
     email = _fetch_user_email(access_token)

@@ -180,14 +180,17 @@ def _fetch_user_email(access_token: str) -> str:
 
 @router.get("/login/google")
 def login_google(request: Request):
-    # Generate redirect URI with proper HTTPS handling for production
-    base_url = str(request.base_url).rstrip("/")
+    # Generate redirect URI with proper HTTPS handling
+    # On Render, X-Forwarded-Proto header tells us the original protocol
+    protocol = request.headers.get("X-Forwarded-Proto", "https")
+    host = request.headers.get("Host", request.url.netloc)
     
-    # Always use HTTPS for production domains
-    if "onrender.com" in base_url or "herokuapp.com" in base_url:
-        base_url = base_url.replace("http://", "https://")
+    redirect_uri = f"{protocol}://{host}/auth/callback"
     
-    redirect_uri = f"{base_url}/auth/callback"
+    print(f"DEBUG: redirect_uri = {redirect_uri}")
+    print(f"DEBUG: protocol = {protocol}")
+    print(f"DEBUG: host = {host}")
+    
     state = secrets.token_urlsafe(24)
 
     session = _get_session(request)
@@ -208,14 +211,16 @@ def auth_callback(request: Request, code: str | None = None, state: str | None =
     if not expected_state or not state or state != expected_state:
         raise HTTPException(status_code=400, detail="Invalid state")
 
-    # Generate redirect URI with proper HTTPS handling for production
-    base_url = str(request.base_url).rstrip("/")
+    # Generate redirect URI with proper HTTPS handling
+    # On Render, X-Forwarded-Proto header tells us the original protocol
+    protocol = request.headers.get("X-Forwarded-Proto", "https")
+    host = request.headers.get("Host", request.url.netloc)
     
-    # Always use HTTPS for production domains
-    if "onrender.com" in base_url or "herokuapp.com" in base_url:
-        base_url = base_url.replace("http://", "https://")
+    redirect_uri = f"{protocol}://{host}/auth/callback"
     
-    redirect_uri = f"{base_url}/auth/callback"
+    print(f"DEBUG: callback redirect_uri = {redirect_uri}")
+    print(f"DEBUG: callback protocol = {protocol}")
+    print(f"DEBUG: callback host = {host}")
     
     access_token = _exchange_code_for_token(code, redirect_uri)
     email = _fetch_user_email(access_token)

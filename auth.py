@@ -15,7 +15,7 @@ from fastapi.responses import JSONResponse, RedirectResponse
 router = APIRouter()
 
 SESSION_COOKIE_NAME = "adaptive_poc_session"
-TEACHER_EMAIL = "jnpriyanshipragya@gmail.com"
+TEACHER_EMAILS = {"jnpriyanshipragya@gmail.com", "spranav.iitkgp@gmail.com"}
 
 # For development: Create SSL context that doesn't verify certificates
 _ssl_context = ssl.create_default_context()
@@ -96,7 +96,7 @@ def get_session(request: Request) -> dict:
 
 
 def resolve_role(email: str) -> str:
-    if email == TEACHER_EMAIL:
+    if email in TEACHER_EMAILS:
         return "teacher"
     return "student"
 

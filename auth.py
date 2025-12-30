@@ -18,10 +18,13 @@ SESSION_COOKIE_NAME = "adaptive_poc_session"
 TEACHER_EMAIL = "jnpriyanshipragya@gmail.com"
 
 # For development: Create SSL context that doesn't verify certificates
-# TODO: Remove this in production and use proper certificates
 _ssl_context = ssl.create_default_context()
 _ssl_context.check_hostname = False
 _ssl_context.verify_mode = ssl.CERT_NONE
+
+# Get base URL from environment or build from request
+# For production, set APP_BASE_URL=https://lms-k2f0.onrender.com
+APP_BASE_URL = os.getenv("APP_BASE_URL", "")
 
 
 def _require_env(name: str) -> str:
@@ -180,16 +183,16 @@ def _fetch_user_email(access_token: str) -> str:
 
 @router.get("/login/google")
 def login_google(request: Request):
-    # Generate redirect URI with proper HTTPS handling
-    # On Render, X-Forwarded-Proto header tells us the original protocol
-    protocol = request.headers.get("X-Forwarded-Proto", "https")
-    host = request.headers.get("Host", request.url.netloc)
+    # Get redirect URI - prefer environment variable for production reliability
+    if APP_BASE_URL:
+        redirect_uri = f"{APP_BASE_URL}/auth/callback"
+    else:
+        # Fallback: build from request headers
+        protocol = request.headers.get("X-Forwarded-Proto", "https")
+        host = request.headers.get("X-Forwarded-Host") or request.headers.get("Host")
+        redirect_uri = f"{protocol}://{host}/auth/callback"
     
-    redirect_uri = f"{protocol}://{host}/auth/callback"
-    
-    print(f"DEBUG: redirect_uri = {redirect_uri}")
-    print(f"DEBUG: protocol = {protocol}")
-    print(f"DEBUG: host = {host}")
+    print(f"DEBUG login_google: redirect_uri = {redirect_uri}")
     
     state = secrets.token_urlsafe(24)
 
@@ -211,16 +214,16 @@ def auth_callback(request: Request, code: str | None = None, state: str | None =
     if not expected_state or not state or state != expected_state:
         raise HTTPException(status_code=400, detail="Invalid state")
 
-    # Generate redirect URI with proper HTTPS handling
-    # On Render, X-Forwarded-Proto header tells us the original protocol
-    protocol = request.headers.get("X-Forwarded-Proto", "https")
-    host = request.headers.get("Host", request.url.netloc)
+    # Get redirect URI - prefer environment variable for production reliability
+    if APP_BASE_URL:
+        redirect_uri = f"{APP_BASE_URL}/auth/callback"
+    else:
+        # Fallback: build from request headers
+        protocol = request.headers.get("X-Forwarded-Proto", "https")
+        host = request.headers.get("X-Forwarded-Host") or request.headers.get("Host")
+        redirect_uri = f"{protocol}://{host}/auth/callback"
     
-    redirect_uri = f"{protocol}://{host}/auth/callback"
-    
-    print(f"DEBUG: callback redirect_uri = {redirect_uri}")
-    print(f"DEBUG: callback protocol = {protocol}")
-    print(f"DEBUG: callback host = {host}")
+    print(f"DEBUG auth_callback: redirect_uri = {redirect_uri}")
     
     access_token = _exchange_code_for_token(code, redirect_uri)
     email = _fetch_user_email(access_token)

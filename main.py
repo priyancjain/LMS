@@ -4,7 +4,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI, Request
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 # Load environment variables from .env file
 load_dotenv()
@@ -15,12 +14,6 @@ from student_routes import router as student_router
 from teacher_routes import router as teacher_router
 
 app = FastAPI(title="Adaptive Learning System")
-
-# Trust proxy headers for Render - only use allowed_hosts parameter
-app.add_middleware(
-    TrustedHostMiddleware,
-    allowed_hosts=["*"],
-)
 
 BASE_DIR = Path(__file__).resolve().parent
 TEMPLATES_DIR = BASE_DIR / "templates"
